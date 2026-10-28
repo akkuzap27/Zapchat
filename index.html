@@ -153,6 +153,17 @@
         .modal-card { width: 100%; max-width: 400px; padding: 32px; text-align: center; position: relative; }
         .close-modal { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
 
+        /* Fullscreen Image Lightbox Viewer */
+        .image-viewer-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; backdrop-filter: blur(8px); }
+        .viewer-header { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; z-index: 5010; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); }
+        .viewer-actions { display: flex; gap: 12px; align-items: center; }
+        .viewer-btn { background: rgba(255, 255, 255, 0.15); border: none; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px); transition: background 0.2s; }
+        .viewer-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .viewer-close-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 4px 12px; }
+        .viewer-container { flex: 1; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: auto; position: relative; padding: 40px; }
+        .viewer-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.2s ease; cursor: grab; user-select: none; }
+        .viewer-img:active { cursor: grabbing; }
+
         .chat-screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; flex-direction: column; z-index: 100; width: 100%; height: 100%; }
         .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: white; border-bottom: 1px solid var(--border-color); height: 68px; flex-shrink: 0; }
         .chat-header-left { display: flex; align-items: center; gap: 14px; }
@@ -166,7 +177,8 @@
         .message-bubble { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14px; word-break: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); user-select: none; position: relative; }
         .message-bubble.sent { background-color: var(--bubble-sent); align-self: flex-end; border-bottom-right-radius: 4px; }
         .message-bubble.received { background-color: var(--bubble-received); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        .message-meta { display: flex; justify-content: flex-end; font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+        .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+        .chat-image { max-width: 100%; border-radius: 10px; margin-bottom: 4px; display: block; max-height: 250px; object-fit: cover; cursor: pointer; }
         
         .message-composer { display: flex; align-items: flex-end; gap: 8px; padding: 16px 24px; background: white; border-top: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
         .message-composer textarea { resize: none; max-height: 120px; line-height: 1.5; }
@@ -237,6 +249,21 @@
             <h1 style="font-size:26px; color:var(--purple-primary); margin-bottom:8px;">ZAPCHAT SURVEY 📊</h1>
             <p style="font-size:13px; color:var(--text-secondary); margin-bottom:24px;">No login required. Vote anonymously!</p>
             <div id="public-survey-content" style="text-align:left;"></div>
+        </div>
+    </div>
+
+    <!-- IN-APP FULLSCREEN IMAGE VIEWER LIGHTBOX -->
+    <div id="image-viewer-modal" class="image-viewer-modal hidden">
+        <div class="viewer-header">
+            <div class="viewer-actions">
+                <button id="viewer-zoom-in" class="viewer-btn" title="Zoom In">🔍+</button>
+                <button id="viewer-zoom-out" class="viewer-btn" title="Zoom Out">🔍-</button>
+                <button id="viewer-download" class="viewer-btn" title="Download Image">⬇ Download</button>
+            </div>
+            <button id="viewer-close" class="viewer-close-btn">✕</button>
+        </div>
+        <div class="viewer-container" id="viewer-container">
+            <img id="viewer-image" class="viewer-img" src="" alt="Fullscreen View">
         </div>
     </div>
 
@@ -373,7 +400,7 @@
                             <p id="upload-status" style="font-size:11px; color:var(--text-secondary); margin-top:4px; font-weight:500;"></p>
                         </div>
 
-                        <div class="form-group"><label>Username</label><input type="text" id="profile-username" readonly class="readonly-input"></div>
+                        <div class="form-group"><label>Username</label><input type="text" id="profile-username" placeholder="Your username"></div>
                         <div class="form-group"><label>Display Name</label><input type="text" id="profile-display-name" placeholder="Your display name"></div>
                         <div class="form-group"><label>Short Bio</label><textarea id="profile-bio" rows="3" placeholder="Tell your friends about yourself..."></textarea></div>
                         <div class="form-group"><label>Member Since</label><input type="text" id="profile-created-at" readonly class="readonly-input"></div>
@@ -468,11 +495,16 @@
                     <div class="message-composer">
                         <button id="composer-plus-btn" class="composer-plus-btn" title="Add attachment">+</button>
                         <div id="attachment-menu" class="attachment-menu hidden">
+                            <button type="button" id="menu-image-btn" class="attachment-menu-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                Image
+                            </button>
                             <button type="button" id="menu-survey-btn" class="attachment-menu-item">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                                 Survey
                             </button>
                         </div>
+                        <input type="file" id="chat-image-file-input" accept="image/*" class="hidden">
                         <textarea id="message-input" rows="1" placeholder="Type a message..."></textarea>
                         <button id="send-message-btn" class="btn primary-btn-sm">Send</button>
                     </div>
@@ -504,14 +536,13 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, orderBy, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, orderBy, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const DB_NAME = "zapchat_cache";
         const STORE_NAME = "users";
         const CONV_STORE_NAME = "conversations";
         let dbIDB = null;
 
-        // Verified Badge SVG HTML exact to provided asset style
         const VERIFIED_BADGE_HTML = `<span class="verified-badge" title="Verified Account"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.99 14.5l-3.5-3.5 1.41-1.41L10.01 13.67l6.59-6.59 1.41 1.41-8 8z" fill="#0095f6"/></svg></span>`;
 
         function openIndexedDB() {
@@ -582,7 +613,6 @@
             }
         });
 
-        // Verified Account Upgrade Handler
         document.getElementById("verify-account-btn").addEventListener("click", async () => {
             if (!currentUser) return;
             if (currentUser.isVerified) {
@@ -778,7 +808,7 @@
             document.getElementById("auth-container").classList.add("hidden");
             document.getElementById("app-container").classList.remove("hidden");
 
-            document.getElementById("profile-username").value = `@${user.username}`;
+            document.getElementById("profile-username").value = user.username;
             document.getElementById("profile-display-name").value = user.displayName || "";
             document.getElementById("profile-bio").value = user.bio || "";
             document.getElementById("profile-created-at").value = user.createdAt ? new Date(user.createdAt.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString() : "Recently";
@@ -812,18 +842,38 @@
             presenceInterval = setInterval(updatePresence, 15000);
 
             document.getElementById("save-profile-btn").onclick = async () => {
+                const newUsername = document.getElementById("profile-username").value.trim().toLowerCase();
                 const newName = document.getElementById("profile-display-name").value.trim();
                 const newBio = document.getElementById("profile-bio").value.trim();
 
-                currentUser.displayName = newName;
-                currentUser.bio = newBio;
-                currentUser.photoURL = uploadedPhotoURL;
+                if (!newUsername || newUsername.length < 3) {
+                    alert("Username must be at least 3 characters.");
+                    return;
+                }
 
-                await updateDoc(doc(db, "users", user.username), { 
-                    displayName: newName, 
-                    bio: newBio,
-                    photoURL: uploadedPhotoURL
-                });
+                if (newUsername !== currentUser.username) {
+                    const checkSnap = await getDoc(doc(db, "users", newUsername));
+                    if (checkSnap.exists()) {
+                        alert("Username already taken. Please choose another.");
+                        return;
+                    }
+
+                    const updatedUser = { ...currentUser, username: newUsername, displayName: newName, bio: newBio, photoURL: uploadedPhotoURL };
+                    await setDoc(doc(db, "users", newUsername), updatedUser);
+                    await deleteDoc(doc(db, "users", currentUser.username));
+                    currentUser = updatedUser;
+                } else {
+                    currentUser.displayName = newName;
+                    currentUser.bio = newBio;
+                    currentUser.photoURL = uploadedPhotoURL;
+
+                    await updateDoc(doc(db, "users", user.username), { 
+                        displayName: newName, 
+                        bio: newBio,
+                        photoURL: uploadedPhotoURL
+                    });
+                }
+
                 localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
                 
                 if (uploadedPhotoURL) {
@@ -832,6 +882,7 @@
                 }
 
                 alert("Profile updated successfully!");
+                location.reload();
             };
 
             const convsQuery = query(collection(db, "conversations"), where("participantUsernames", "array-contains", user.username));
@@ -1137,7 +1188,8 @@
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     lastMessagePreview: "Started conversation",
-                    unreadBy: {}
+                    unreadBy: {},
+                    seenBy: {}
                 });
                 convId = newConv.id;
             }
@@ -1148,6 +1200,7 @@
         let activeConvId = null;
         let msgUnsub = null;
         let presenceUnsub = null;
+        let convUnsub = null;
 
         window.openChat = async (convId, friendUsername, friendPhoto = "", friendIsVerified = false) => {
             activeConvId = convId;
@@ -1172,10 +1225,21 @@
                 const convRef = doc(db, "conversations", convId);
                 const convSnap = await getDoc(convRef);
                 if (convSnap.exists()) {
-                    const unreadBy = convSnap.data().unreadBy || {};
+                    const data = convSnap.data();
+                    const unreadBy = data.unreadBy || {};
+                    const seenBy = data.seenBy || {};
+                    let needsUpdate = false;
+                    
                     if (unreadBy[currentUser.username]) {
                         unreadBy[currentUser.username] = false;
-                        await updateDoc(convRef, { unreadBy });
+                        needsUpdate = true;
+                    }
+                    if (!seenBy[currentUser.username]) {
+                        seenBy[currentUser.username] = true;
+                        needsUpdate = true;
+                    }
+                    if (needsUpdate) {
+                        await updateDoc(convRef, { unreadBy, seenBy });
                     }
                 }
             } catch (e) {}
@@ -1200,22 +1264,45 @@
                 }
             });
 
+            if (convUnsub) convUnsub();
+            convUnsub = onSnapshot(doc(db, "conversations", convId), async (convSnap) => {
+                if (convSnap.exists()) {
+                    const data = convSnap.data();
+                    const seenBy = data.seenBy || {};
+                    const isFriendSeen = seenBy[friendUsername] === true;
+                    
+                    document.querySelectorAll(".message-bubble.sent .seen-status").forEach(el => {
+                        el.textContent = isFriendSeen ? "Seen ✓✓" : "✓✓";
+                        if (isFriendSeen) el.style.color = "var(--purple-primary)";
+                    });
+                }
+            });
+
             if (msgUnsub) msgUnsub();
             const msgCont = document.getElementById("messages-container");
             const msgQuery = query(collection(db, "conversations", convId, "messages"), orderBy("createdAt", "asc"));
             
-            msgUnsub = onSnapshot(msgQuery, (snap) => {
+            msgUnsub = onSnapshot(msgQuery, async (snap) => {
                 msgCont.innerHTML = "";
                 if (snap.empty) {
                     msgCont.innerHTML = "<p style='text-align:center; color:var(--text-secondary); margin-top:30px;'>Start the conversation! ⚡</p>";
                     return;
                 }
+
+                const convRef = doc(db, "conversations", convId);
+                const convSnap = await getDoc(convRef);
+                const seenBy = convSnap.exists() ? (convSnap.data().seenBy || {}) : {};
+                const isFriendSeen = seenBy[friendUsername] === true;
+
                 snap.forEach(d => {
                     const m = d.data();
                     const isSent = m.senderUsername === currentUser.username;
                     const bubble = document.createElement("div");
                     bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
                     
+                    const timeStr = m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                    const seenStatusHtml = isSent ? `<span class="seen-status" style="${isFriendSeen ? 'color:var(--purple-primary); font-weight:700;' : ''}">${isFriendSeen ? 'Seen ✓✓' : '✓✓'}</span>` : '';
+
                     if (m.type === 'survey') {
                         const surveyUrl = `${window.location.origin}${window.location.pathname}?survey=${m.surveyId}`;
                         bubble.innerHTML = `
@@ -1224,10 +1311,16 @@
                                 <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">${m.options.length} options available.</div>
                                 <a href="${surveyUrl}" target="_blank" class="survey-link-tag">Open Survey & Vote ➔</a>
                             </div>
-                            <div class="message-meta">${m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</div>
+                            <div class="message-meta">${timeStr} ${seenStatusHtml}</div>
                         `;
+                    } else if (m.type === 'image') {
+                        bubble.innerHTML = `
+                            <img src="${m.imageUrl}" class="chat-image" data-fullurl="${m.imageUrl}">
+                            <div class="message-meta">${timeStr} ${seenStatusHtml}</div>
+                        `;
+                        bubble.querySelector("img").onclick = () => openImageViewer(m.imageUrl);
                     } else {
-                        bubble.innerHTML = `<div>${m.text}</div><div class="message-meta">${m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</div>`;
+                        bubble.innerHTML = `<div>${m.text}</div><div class="message-meta">${timeStr} ${seenStatusHtml}</div>`;
                     }
 
                     if (isSent) {
@@ -1251,6 +1344,69 @@
                 msgCont.scrollTop = msgCont.scrollHeight;
             });
         };
+
+        // In-App Fullscreen Image Viewer Logic
+        let currentZoom = 1;
+        const viewerModal = document.getElementById("image-viewer-modal");
+        const viewerImg = document.getElementById("viewer-image");
+
+        function openImageViewer(url) {
+            currentZoom = 1;
+            viewerImg.style.transform = `scale(${currentZoom})`;
+            viewerImg.src = url;
+            viewerModal.classList.remove("hidden");
+        }
+
+        document.getElementById("viewer-close").onclick = () => {
+            viewerModal.classList.add("hidden");
+        };
+
+        document.getElementById("viewer-zoom-in").onclick = () => {
+            currentZoom = Math.min(currentZoom + 0.5, 4);
+            viewerImg.style.transform = `scale(${currentZoom})`;
+        };
+
+        document.getElementById("viewer-zoom-out").onclick = () => {
+            currentZoom = Math.max(currentZoom - 0.5, 1);
+            viewerImg.style.transform = `scale(${currentZoom})`;
+        };
+
+        document.getElementById("viewer-download").onclick = async () => {
+            const url = viewerImg.src;
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = blobUrl;
+                a.download = `zapchat_image_${Date.now()}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+            } catch (err) {
+                // Fallback new window trigger if CORS restricts blob download
+                window.open(url, "_blank");
+            }
+        };
+
+        // Drag/Pan functionality when zoomed in
+        let isDragging = false, startX, startY, translateX = 0, translateY = 0;
+        viewerImg.onmousedown = (e) => {
+            if (currentZoom > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                e.preventDefault();
+            }
+        };
+        window.onmousemove = (e) => {
+            if (!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            viewerImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+        };
+        window.onmouseup = () => { isDragging = false; };
 
         function showMessageContextMenu(e, msgId) {
             e.stopPropagation();
@@ -1280,12 +1436,25 @@
             }, 100);
         }
 
-        document.getElementById("close-chat-btn").addEventListener("click", () => {
+        document.getElementById("close-chat-btn").addEventListener("click", async () => {
+            if (activeConvId) {
+                try {
+                    const convRef = doc(db, "conversations", activeConvId);
+                    const convSnap = await getDoc(convRef);
+                    if (convSnap.exists()) {
+                        const seenBy = convSnap.data().seenBy || {};
+                        seenBy[currentUser.username] = false;
+                        await updateDoc(convRef, { seenBy });
+                    }
+                } catch(e){}
+            }
+
             document.getElementById("chat-screen").classList.add("hidden");
             document.getElementById("desktop-sidebar").style.display = "";
             document.getElementById("mobile-bottom-nav").style.display = "";
             if (msgUnsub) msgUnsub();
             if (presenceUnsub) presenceUnsub();
+            if (convUnsub) convUnsub();
             activeConvId = null;
         });
 
@@ -1309,6 +1478,63 @@
 
         document.addEventListener("click", () => {
             attachMenu.classList.add("hidden");
+        });
+
+        document.getElementById("menu-image-btn").addEventListener("click", () => {
+            attachMenu.classList.add("hidden");
+            document.getElementById("chat-image-file-input").click();
+        });
+
+        document.getElementById("chat-image-file-input").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file || !activeConvId) return;
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const imageUrl = data.data.url;
+                    await addDoc(collection(db, "conversations", activeConvId, "messages"), {
+                        senderUsername: currentUser.username,
+                        type: "image",
+                        imageUrl,
+                        createdAt: new Date()
+                    });
+
+                    const convRef = doc(db, "conversations", activeConvId);
+                    const convSnap = await getDoc(convRef);
+                    let unreadBy = {};
+                    let seenBy = {};
+                    if (convSnap.exists()) {
+                        const participants = convSnap.data().participantUsernames || [];
+                        const recipient = participants.find(u => u !== currentUser.username);
+                        unreadBy = convSnap.data().unreadBy || {};
+                        seenBy = convSnap.data().seenBy || {};
+                        if (recipient) {
+                            unreadBy[recipient] = true;
+                            seenBy[recipient] = false;
+                        }
+                    }
+
+                    await updateDoc(convRef, {
+                        updatedAt: new Date(),
+                        lastMessagePreview: "📷 Photo",
+                        unreadBy,
+                        seenBy
+                    });
+                } else {
+                    alert("Image upload failed.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Image upload error.");
+            }
         });
 
         document.getElementById("menu-survey-btn").addEventListener("click", () => {
@@ -1368,17 +1594,23 @@
                 const convRef = doc(db, "conversations", activeConvId);
                 const convSnap = await getDoc(convRef);
                 let unreadBy = {};
+                let seenBy = {};
                 if (convSnap.exists()) {
                     const participants = convSnap.data().participantUsernames || [];
                     const recipient = participants.find(u => u !== currentUser.username);
                     unreadBy = convSnap.data().unreadBy || {};
-                    if (recipient) unreadBy[recipient] = true;
+                    seenBy = convSnap.data().seenBy || {};
+                    if (recipient) {
+                        unreadBy[recipient] = true;
+                        seenBy[recipient] = false;
+                    }
                 }
 
                 await updateDoc(convRef, {
                     updatedAt: new Date(),
                     lastMessagePreview: `📊 Survey: ${question}`,
-                    unreadBy
+                    unreadBy,
+                    seenBy
                 });
 
                 document.getElementById("survey-modal").classList.add("hidden");
@@ -1408,17 +1640,23 @@
             const convRef = doc(db, "conversations", activeConvId);
             const convSnap = await getDoc(convRef);
             let unreadBy = {};
+            let seenBy = {};
             if (convSnap.exists()) {
                 const participants = convSnap.data().participantUsernames || [];
                 const recipient = participants.find(u => u !== currentUser.username);
                 unreadBy = convSnap.data().unreadBy || {};
-                if (recipient) unreadBy[recipient] = true;
+                seenBy = convSnap.data().seenBy || {};
+                if (recipient) {
+                    unreadBy[recipient] = true;
+                    seenBy[recipient] = false;
+                }
             }
 
             await updateDoc(convRef, {
                 updatedAt: new Date(),
                 lastMessagePreview: text,
-                unreadBy
+                unreadBy,
+                seenBy
             });
         }
     </script>
