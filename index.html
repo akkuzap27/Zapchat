@@ -119,17 +119,19 @@
         .view-header h2 { font-size: 24px; color: var(--purple-primary); font-weight: 700; }
 
         .conversations-list, .user-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .conversation-card, .user-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 12px; background: var(--bg-notebook); border: 1px solid var(--border-color); cursor: pointer; width: 100%; transition: transform 0.1s ease, background 0.2s; }
+        .conversation-card, .user-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 12px; background: var(--bg-notebook); border: 1px solid var(--border-color); cursor: pointer; width: 100%; transition: transform 0.1s ease, background 0.2s; user-select: none; }
         .conversation-card:hover, .user-card:hover { background: var(--lavender-light); border-color: var(--lavender-accent); }
         .conv-info { flex: 1; min-width: 0; margin-left: 14px; }
         .conv-header-row { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
-        .conv-username { font-weight: 700; font-size: 15px; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px; }
+        .conv-username { font-weight: 700; font-size: 15px; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
+        .verified-badge { width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; flex-shrink: 0; }
+        .verified-badge svg { width: 100%; height: 100%; }
         .unread-dot { width: 9px; height: 9px; background-color: var(--danger-color); border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
         .conv-preview { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; }
 
         .user-card-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
         .user-card-details { min-width: 0; flex: 1; }
-        .user-card-details h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-heading); }
+        .user-card-details h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
         .user-card-details p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .profile-card, .settings-list, .developer-card { max-width: 520px; margin: 0 auto; padding: 36px; width: 100%; }
@@ -154,19 +156,34 @@
         .chat-screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; flex-direction: column; z-index: 100; width: 100%; height: 100%; }
         .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: white; border-bottom: 1px solid var(--border-color); height: 68px; flex-shrink: 0; }
         .chat-header-left { display: flex; align-items: center; gap: 14px; }
-        .chat-friend-info h3 { font-size: 16px; font-weight: 700; cursor: pointer; font-family: var(--font-heading); }
+        .chat-friend-info h3 { font-size: 16px; font-weight: 700; cursor: pointer; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
         .status-indicator { font-size: 12px; color: var(--text-secondary); font-weight: 600; display: flex; align-items: center; gap: 4px; }
         .status-indicator.online { color: var(--success-color); }
         .status-indicator::before { content: ''; width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; display: inline-block; }
         .status-indicator.online::before { background: var(--success-color); }
         
         .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; background-color: var(--bg-notebook); }
-        .message-bubble { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14px; word-break: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .message-bubble { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14px; word-break: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); user-select: none; position: relative; }
         .message-bubble.sent { background-color: var(--bubble-sent); align-self: flex-end; border-bottom-right-radius: 4px; }
         .message-bubble.received { background-color: var(--bubble-received); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
         .message-meta { display: flex; justify-content: flex-end; font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
-        .message-composer { display: flex; align-items: flex-end; gap: 12px; padding: 16px 24px; background: white; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        
+        .message-composer { display: flex; align-items: flex-end; gap: 8px; padding: 16px 24px; background: white; border-top: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
         .message-composer textarea { resize: none; max-height: 120px; line-height: 1.5; }
+        .composer-plus-btn { background: var(--lavender-light); color: var(--purple-primary); border: 1px solid var(--lavender-accent); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .composer-plus-btn:hover { background: var(--lavender-accent); color: white; }
+        
+        .attachment-menu { position: absolute; bottom: 75px; left: 24px; background: white; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow); padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 150; width: 180px; }
+        .attachment-menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-primary); background: none; border: none; cursor: pointer; text-align: left; width: 100%; transition: background 0.2s; }
+        .attachment-menu-item:hover { background: var(--lavender-light); color: var(--purple-primary); }
+
+        .context-action-menu { position: absolute; background: white; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow); padding: 6px; z-index: 2000; width: 150px; display: flex; flex-direction: column; gap: 4px; }
+        .context-action-item { padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--danger-color); background: none; border: none; border-radius: 6px; cursor: pointer; text-align: left; width: 100%; }
+        .context-action-item:hover { background: #fef2f2; }
+
+        .survey-bubble-card { background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-top: 4px; width: 260px; }
+        .survey-bubble-title { font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--purple-primary); }
+        .survey-link-tag { display: inline-block; margin-top: 6px; font-size: 11px; color: var(--purple-primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
 
         @media (max-width: 768px) {
             .desktop-sidebar { display: none; }
@@ -185,11 +202,41 @@
         <div class="modal-card notebook-paper">
             <button class="close-modal" id="close-profile-modal">✕</button>
             <div id="modal-avatar" class="avatar-lg">U</div>
-            <h3 id="modal-username" style="color:var(--purple-primary); margin-bottom:4px; font-size:20px;">@username</h3>
+            <h3 id="modal-username" style="color:var(--purple-primary); margin-bottom:4px; font-size:20px; display:flex; align-items:center; justify-content:center; gap:6px;">@username</h3>
             <p id="modal-display-name" style="font-weight:700; margin-bottom:12px; font-size:15px;"></p>
             <p id="modal-bio" style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; padding:0 10px; line-height:1.5;"></p>
             <p id="modal-joined" style="font-size:11px; color:var(--text-secondary); margin-bottom:24px; font-weight:500;"></p>
             <button id="modal-chat-btn" class="btn primary-btn">Start Message</button>
+        </div>
+    </div>
+
+    <!-- SURVEY CREATOR MODAL -->
+    <div id="survey-modal" class="modal-overlay hidden">
+        <div class="modal-card notebook-paper" style="max-width:440px; text-align:left;">
+            <button class="close-modal" id="close-survey-modal">✕</button>
+            <h3 style="color:var(--purple-primary); margin-bottom:16px; font-size:20px;">Create Survey 📊</h3>
+            <div class="input-group">
+                <label>Survey Question</label>
+                <input type="text" id="survey-question-input" placeholder="Ask something...">
+            </div>
+            <div class="input-group">
+                <label>Options</label>
+                <div id="survey-options-container" style="display:flex; flex-direction:column; gap:8px; margin-bottom:8px;">
+                    <input type="text" class="survey-option-input" placeholder="Option 1">
+                    <input type="text" class="survey-option-input" placeholder="Option 2">
+                </div>
+                <button type="button" id="add-survey-option-btn" class="btn secondary-btn-sm">+ Add Option</button>
+            </div>
+            <button id="publish-survey-btn" class="btn primary-btn" style="margin-top:10px;">Publish & Share Survey</button>
+        </div>
+    </div>
+
+    <!-- EXTERNAL SURVEY PUBLIC OVERLAY -->
+    <div id="public-survey-overlay" class="modal-overlay hidden" style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); z-index:3000;">
+        <div class="notebook-paper" style="width:100%; max-width:420px; padding:36px; text-align:center;">
+            <h1 style="font-size:26px; color:var(--purple-primary); margin-bottom:8px;">ZAPCHAT SURVEY 📊</h1>
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:24px;">No login required. Vote anonymously!</p>
+            <div id="public-survey-content" style="text-align:left;"></div>
         </div>
     </div>
 
@@ -265,7 +312,7 @@
                 </button>
                 <div id="header-avatar" class="avatar-sm">U</div>
                 <button id="settings-menu-btn" class="icon-btn" title="Settings">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
             </div>
         </header>
@@ -287,7 +334,7 @@
                         <span>Profile</span>
                     </li>
                     <li class="nav-item" data-target="settings-view">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         <span>Settings</span>
                     </li>
                 </ul>
@@ -338,6 +385,13 @@
                 <section id="settings-view" class="view-section">
                     <div class="view-header"><h2>Settings</h2></div>
                     <div class="settings-list notebook-paper">
+                        <div class="setting-item" id="verify-account-btn" style="color: var(--purple-primary);">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                Get Verified (ZAPCHAT Pro)
+                            </span>
+                            <span>➔</span>
+                        </div>
                         <div class="setting-item" id="install-pwa-btn" style="color: var(--purple-primary);">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -412,6 +466,13 @@
                     </div>
                     <div id="messages-container" class="messages-container"></div>
                     <div class="message-composer">
+                        <button id="composer-plus-btn" class="composer-plus-btn" title="Add attachment">+</button>
+                        <div id="attachment-menu" class="attachment-menu hidden">
+                            <button type="button" id="menu-survey-btn" class="attachment-menu-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                Survey
+                            </button>
+                        </div>
                         <textarea id="message-input" rows="1" placeholder="Type a message..."></textarea>
                         <button id="send-message-btn" class="btn primary-btn-sm">Send</button>
                     </div>
@@ -449,6 +510,9 @@
         const STORE_NAME = "users";
         const CONV_STORE_NAME = "conversations";
         let dbIDB = null;
+
+        // Verified Badge SVG HTML exact to provided asset style
+        const VERIFIED_BADGE_HTML = `<span class="verified-badge" title="Verified Account"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.99 14.5l-3.5-3.5 1.41-1.41L10.01 13.67l6.59-6.59 1.41 1.41-8 8z" fill="#0095f6"/></svg></span>`;
 
         function openIndexedDB() {
             return new Promise((resolve, reject) => {
@@ -518,6 +582,31 @@
             }
         });
 
+        // Verified Account Upgrade Handler
+        document.getElementById("verify-account-btn").addEventListener("click", async () => {
+            if (!currentUser) return;
+            if (currentUser.isVerified) {
+                alert("Your account is already verified! ⚡");
+                return;
+            }
+            const pwd = prompt("Only premium users can upgrade. Enter premium password:");
+            if (pwd === null) return;
+            if (pwd === "zap260116") {
+                currentUser.isVerified = true;
+                try {
+                    await updateDoc(doc(db, "users", currentUser.username), { isVerified: true });
+                    localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+                    alert("Congratulations! Your account is now verified and upgraded to ZAPCHAT Pro! 🎉");
+                    location.reload();
+                } catch (err) {
+                    console.error(err);
+                    alert("Verification upgrade failed.");
+                }
+            } else {
+                alert("Incorrect premium password.");
+            }
+        });
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -583,6 +672,7 @@
                     displayName: username,
                     bio: "Hey there! I'm using ZAPCHAT ⚡",
                     photoURL: "",
+                    isVerified: false,
                     createdAt: new Date(),
                     lastSeen: new Date()
                 };
@@ -707,13 +797,11 @@
                 headerAvatar.textContent = user.username.charAt(0).toUpperCase();
             }
 
-            // INSTANT LOAD: Render cached conversations immediately before network fetch completes
             const cachedConvs = await getConversationsFromIndexedDB();
             if (cachedConvs && cachedConvs.length > 0) {
                 renderConversationsList(cachedConvs, user.username);
             }
 
-            // Start presence heartbeat
             async function updatePresence() {
                 try {
                     await updateDoc(doc(db, "users", currentUser.username), { lastSeen: new Date() });
@@ -758,12 +846,12 @@
                     return tB - tA;
                 });
 
-                // Cache conversations locally for instant subsequent loads
                 await saveConversationsToIndexedDB(convs);
                 renderConversationsList(convs, user.username);
             });
 
             fetchAllUsers();
+            checkUrlForSurvey();
         }
 
         async function renderConversationsList(convs, currentUsername) {
@@ -780,14 +868,32 @@
                 if (!otherUsername) continue;
 
                 let otherPhoto = "";
+                let otherIsVerified = false;
                 const cachedUsers = await getUsersFromIndexedDB();
                 const foundUser = cachedUsers.find(u => u.username === otherUsername);
-                if (foundUser) otherPhoto = foundUser.photoURL || "";
+                if (foundUser) {
+                    otherPhoto = foundUser.photoURL || "";
+                    otherIsVerified = foundUser.isVerified || false;
+                }
 
                 const card = document.createElement("div");
                 card.className = "conversation-card";
-                card.onclick = () => openChat(conv.id, otherUsername, otherPhoto);
+                card.onclick = () => openChat(conv.id, otherUsername, otherPhoto, otherIsVerified);
                 
+                let pressTimer;
+                card.addEventListener("mousedown", (e) => {
+                    pressTimer = setTimeout(() => showChatContextMenu(e, conv.id, otherUsername), 600);
+                });
+                card.addEventListener("mouseup", () => clearTimeout(pressTimer));
+                card.addEventListener("touchstart", (e) => {
+                    pressTimer = setTimeout(() => showChatContextMenu(e, conv.id, otherUsername), 600);
+                });
+                card.addEventListener("touchend", () => clearTimeout(pressTimer));
+                card.addEventListener("contextmenu", (e) => {
+                    e.preventDefault();
+                    showChatContextMenu(e, conv.id, otherUsername);
+                });
+
                 const avatarStyle = otherPhoto ? `style="background-image:url('${otherPhoto}'); background-size:cover; background-position:center;"` : "";
                 const avatarText = otherPhoto ? "" : otherUsername.charAt(0).toUpperCase();
 
@@ -798,7 +904,7 @@
                     <div class="avatar-sm" ${avatarStyle}>${avatarText}</div>
                     <div class="conv-info">
                         <div class="conv-header-row">
-                            <span class="conv-username">@${otherUsername} ${isUnread ? '<span class="unread-dot"></span>' : ''}</span>
+                            <span class="conv-username">@${otherUsername} ${otherIsVerified ? VERIFIED_BADGE_HTML : ''} ${isUnread ? '<span class="unread-dot"></span>' : ''}</span>
                         </div>
                         <div class="conv-preview">${conv.lastMessagePreview || 'No messages yet'}</div>
                     </div>
@@ -807,10 +913,122 @@
             }
         }
 
+        function showChatContextMenu(e, convId, friendUsername) {
+            e.stopPropagation();
+            const existing = document.getElementById("floating-context-menu");
+            if (existing) existing.remove();
+
+            const menu = document.createElement("div");
+            menu.id = "floating-context-menu";
+            menu.className = "context-action-menu";
+            menu.style.top = `${e.clientY || e.touches?.[0].clientY || 100}px`;
+            menu.style.left = `${e.clientX || e.touches?.[0].clientX || 100}px`;
+
+            menu.innerHTML = `<button class="context-action-item">Delete Chat</button>`;
+            menu.querySelector("button").onclick = async () => {
+                menu.remove();
+                if (confirm(`Delete chat with @${friendUsername}?`)) {
+                    try {
+                        const msgSnap = await getDocs(collection(db, "conversations", convId, "messages"));
+                        const batchDeletions = msgSnap.docs.map(d => deleteDoc(d.ref));
+                        await Promise.all(batchDeletions);
+                        await deleteDoc(doc(db, "conversations", convId));
+                    } catch (err) {
+                        console.error(err);
+                        alert("Failed to delete chat.");
+                    }
+                }
+            };
+
+            document.body.appendChild(menu);
+            setTimeout(() => {
+                window.addEventListener("click", () => menu.remove(), { once: true });
+            }, 100);
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             const saved = localStorage.getItem(SESSION_KEY);
-            if (saved) initApp(JSON.parse(saved));
+            if (saved) {
+                initApp(JSON.parse(saved));
+            } else {
+                checkUrlForSurvey();
+            }
         });
+
+        async function checkUrlForSurvey() {
+            const params = new URLSearchParams(window.location.search);
+            const surveyId = params.get("survey");
+            if (!surveyId) return;
+
+            try {
+                const surveyRef = doc(db, "surveys", surveyId);
+                const surveySnap = await getDoc(surveyRef);
+                if (!surveySnap.exists()) {
+                    alert("Survey not found or expired.");
+                    return;
+                }
+
+                const surveyData = surveySnap.data();
+                document.getElementById("auth-container").classList.add("hidden");
+                document.getElementById("app-container").classList.add("hidden");
+                document.getElementById("public-survey-overlay").classList.remove("hidden");
+
+                renderPublicSurvey(surveyId, surveyData);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderPublicSurvey(surveyId, surveyData) {
+            const container = document.getElementById("public-survey-content");
+            const hasVotedKey = `voted_survey_${surveyId}`;
+            const hasVoted = localStorage.getItem(hasVotedKey);
+
+            let html = `<h3 style="font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:16px;">${surveyData.question}</h3>`;
+            
+            if (hasVoted) {
+                html += `<p style="font-size:12px; color:var(--success-color); font-weight:600; margin-bottom:14px;">✓ You have already voted. Live Results:</p>`;
+                const totalVotes = Object.values(surveyData.votes || {}).reduce((a, b) => a + b, 0) || 1;
+                
+                surveyData.options.forEach((opt, idx) => {
+                    const count = (surveyData.votes && surveyData.votes[idx]) || 0;
+                    const percent = Math.round((count / totalVotes) * 100);
+                    html += `
+                        <div style="margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px;">
+                                <span>${opt}</span><span>${count} votes (${percent}%)</span>
+                            </div>
+                            <div style="background:var(--border-color); height:8px; border-radius:4px; overflow:hidden;">
+                                <div style="background:var(--purple-primary); width:${percent}%; height:100%;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                surveyData.options.forEach((opt, idx) => {
+                    html += `<button class="btn secondary-btn" style="width:100%; margin-bottom:8px; text-align:left;" onclick="voteSurvey('${surveyId}', ${idx})">${opt}</button>`;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        window.voteSurvey = async (surveyId, optionIndex) => {
+            try {
+                const surveyRef = doc(db, "surveys", surveyId);
+                const snap = await getDoc(surveyRef);
+                if (!snap.exists()) return;
+                const data = snap.data();
+                const votes = data.votes || {};
+                votes[optionIndex] = (votes[optionIndex] || 0) + 1;
+
+                await updateDoc(surveyRef, { votes });
+                localStorage.setItem(`voted_survey_${surveyId}`, "true");
+                renderPublicSurvey(surveyId, { ...data, votes });
+            } catch (err) {
+                console.error(err);
+                alert("Failed to submit vote.");
+            }
+        };
 
         async function fetchAllUsers() {
             const list = document.getElementById("search-results-list");
@@ -845,7 +1063,7 @@
                 card.innerHTML = `
                     <div class="user-card-info" onclick="showUserProfile('${u.username}')">
                         <div class="avatar-sm" ${avatarStyle}>${avatarText}</div>
-                        <div class="user-card-details"><h4>@${u.username}</h4><p>${u.displayName || u.username}</p></div>
+                        <div class="user-card-details"><h4>@${u.username} ${u.isVerified ? VERIFIED_BADGE_HTML : ''}</h4><p>${u.displayName || u.username}</p></div>
                     </div>
                     <button class="btn primary-btn-sm" onclick="startChatWith('${u.username}')">Message</button>
                 `;
@@ -878,7 +1096,7 @@
                 modalAvatar.textContent = user.username.charAt(0).toUpperCase();
             }
 
-            document.getElementById("modal-username").textContent = `@${user.username}`;
+            document.getElementById("modal-username").innerHTML = `@${user.username} ${user.isVerified ? VERIFIED_BADGE_HTML : ''}`;
             document.getElementById("modal-display-name").textContent = user.displayName || user.username;
             document.getElementById("modal-bio").textContent = user.bio || "No bio available.";
             document.getElementById("modal-joined").textContent = user.createdAt ? `Joined: ${new Date(user.createdAt.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString()}` : "";
@@ -901,9 +1119,13 @@
             const snap = await getDocs(q);
             let convId = null;
             let targetPhoto = "";
+            let targetIsVerified = false;
             
             const targetSnap = allUsersCache.find(u => u.username === targetUsername);
-            if (targetSnap) targetPhoto = targetSnap.photoURL || "";
+            if (targetSnap) {
+                targetPhoto = targetSnap.photoURL || "";
+                targetIsVerified = targetSnap.isVerified || false;
+            }
 
             snap.forEach(d => {
                 if (d.data().participantUsernames.includes(targetUsername)) convId = d.id;
@@ -919,7 +1141,7 @@
                 });
                 convId = newConv.id;
             }
-            openChat(convId, targetUsername, targetPhoto);
+            openChat(convId, targetUsername, targetPhoto, targetIsVerified);
             switchView('chats-view');
         };
 
@@ -927,9 +1149,9 @@
         let msgUnsub = null;
         let presenceUnsub = null;
 
-        window.openChat = async (convId, friendUsername, friendPhoto = "") => {
+        window.openChat = async (convId, friendUsername, friendPhoto = "", friendIsVerified = false) => {
             activeConvId = convId;
-            document.getElementById("chat-friend-username").textContent = `@${friendUsername}`;
+            document.getElementById("chat-friend-username").innerHTML = `@${friendUsername} ${friendIsVerified ? VERIFIED_BADGE_HTML : ''}`;
             document.getElementById("chat-friend-username").onclick = () => showUserProfile(friendUsername);
             
             const chatAvatar = document.getElementById("chat-friend-avatar");
@@ -942,12 +1164,10 @@
                 chatAvatar.textContent = friendUsername.charAt(0).toUpperCase();
             }
 
-            // Hide tabs / navigation bars when opening chat
             document.getElementById("desktop-sidebar").style.display = "none";
             document.getElementById("mobile-bottom-nav").style.display = "none";
             document.getElementById("chat-screen").classList.remove("hidden");
 
-            // Clear unread dot for current user in Firestore
             try {
                 const convRef = doc(db, "conversations", convId);
                 const convSnap = await getDoc(convRef);
@@ -960,7 +1180,6 @@
                 }
             } catch (e) {}
 
-            // Track real-time presence of friend
             if (presenceUnsub) presenceUnsub();
             presenceUnsub = onSnapshot(doc(db, "users", friendUsername), (userSnap) => {
                 const statusEl = document.getElementById("chat-status-text");
@@ -996,16 +1215,73 @@
                     const isSent = m.senderUsername === currentUser.username;
                     const bubble = document.createElement("div");
                     bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
-                    bubble.innerHTML = `<div>${m.text}</div><div class="message-meta">${m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</div>`;
+                    
+                    if (m.type === 'survey') {
+                        const surveyUrl = `${window.location.origin}${window.location.pathname}?survey=${m.surveyId}`;
+                        bubble.innerHTML = `
+                            <div class="survey-bubble-card">
+                                <div class="survey-bubble-title">📊 Survey: ${m.question}</div>
+                                <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">${m.options.length} options available.</div>
+                                <a href="${surveyUrl}" target="_blank" class="survey-link-tag">Open Survey & Vote ➔</a>
+                            </div>
+                            <div class="message-meta">${m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</div>
+                        `;
+                    } else {
+                        bubble.innerHTML = `<div>${m.text}</div><div class="message-meta">${m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</div>`;
+                    }
+
+                    if (isSent) {
+                        let msgTimer;
+                        bubble.addEventListener("mousedown", (e) => {
+                            msgTimer = setTimeout(() => showMessageContextMenu(e, d.id), 600);
+                        });
+                        bubble.addEventListener("mouseup", () => clearTimeout(msgTimer));
+                        bubble.addEventListener("touchstart", (e) => {
+                            msgTimer = setTimeout(() => showMessageContextMenu(e, d.id), 600);
+                        });
+                        bubble.addEventListener("touchend", () => clearTimeout(msgTimer));
+                        bubble.addEventListener("contextmenu", (e) => {
+                            e.preventDefault();
+                            showMessageContextMenu(e, d.id);
+                        });
+                    }
+
                     msgCont.appendChild(bubble);
                 });
                 msgCont.scrollTop = msgCont.scrollHeight;
             });
         };
 
+        function showMessageContextMenu(e, msgId) {
+            e.stopPropagation();
+            const existing = document.getElementById("floating-context-menu");
+            if (existing) existing.remove();
+
+            const menu = document.createElement("div");
+            menu.id = "floating-context-menu";
+            menu.className = "context-action-menu";
+            menu.style.top = `${e.clientY || e.touches?.[0].clientY || 100}px`;
+            menu.style.left = `${e.clientX || e.touches?.[0].clientX || 100}px`;
+
+            menu.innerHTML = `<button class="context-action-item">Delete for Everyone</button>`;
+            menu.querySelector("button").onclick = async () => {
+                menu.remove();
+                try {
+                    await deleteDoc(doc(db, "conversations", activeConvId, "messages", msgId));
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to delete message.");
+                }
+            };
+
+            document.body.appendChild(menu);
+            setTimeout(() => {
+                window.addEventListener("click", () => menu.remove(), { once: true });
+            }, 100);
+        }
+
         document.getElementById("close-chat-btn").addEventListener("click", () => {
             document.getElementById("chat-screen").classList.add("hidden");
-            // Restore navigation bars on back/close
             document.getElementById("desktop-sidebar").style.display = "";
             document.getElementById("mobile-bottom-nav").style.display = "";
             if (msgUnsub) msgUnsub();
@@ -1020,6 +1296,95 @@
                 const batchDeletions = msgSnap.docs.map(d => deleteDoc(d.ref));
                 await Promise.all(batchDeletions);
                 await updateDoc(doc(db, "conversations", activeConvId), { lastMessagePreview: "Conversation cleared", updatedAt: new Date() });
+            }
+        });
+
+        const plusBtn = document.getElementById("composer-plus-btn");
+        const attachMenu = document.getElementById("attachment-menu");
+
+        plusBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            attachMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", () => {
+            attachMenu.classList.add("hidden");
+        });
+
+        document.getElementById("menu-survey-btn").addEventListener("click", () => {
+            attachMenu.classList.add("hidden");
+            document.getElementById("survey-question-input").value = "";
+            document.getElementById("survey-options-container").innerHTML = `
+                <input type="text" class="survey-option-input" placeholder="Option 1">
+                <input type="text" class="survey-option-input" placeholder="Option 2">
+            `;
+            document.getElementById("survey-modal").classList.remove("hidden");
+        });
+
+        document.getElementById("close-survey-modal").addEventListener("click", () => {
+            document.getElementById("survey-modal").classList.add("hidden");
+        });
+
+        document.getElementById("add-survey-option-btn").addEventListener("click", () => {
+            const container = document.getElementById("survey-options-container");
+            const count = container.children.length + 1;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.className = "survey-option-input";
+            input.placeholder = `Option ${count}`;
+            container.appendChild(input);
+        });
+
+        document.getElementById("publish-survey-btn").addEventListener("click", async () => {
+            const question = document.getElementById("survey-question-input").value.trim();
+            const optionInputs = document.querySelectorAll(".survey-option-input");
+            const options = [];
+            optionInputs.forEach(inp => {
+                if (inp.value.trim()) options.push(inp.value.trim());
+            });
+
+            if (!question) { alert("Please enter a survey question."); return; }
+            if (options.length < 2) { alert("Please provide at least 2 options."); return; }
+
+            try {
+                const surveyRef = await addDoc(collection(db, "surveys"), {
+                    question,
+                    options,
+                    votes: {},
+                    createdAt: new Date(),
+                    creator: currentUser.username
+                });
+
+                await addDoc(collection(db, "conversations", activeConvId, "messages"), {
+                    senderUsername: currentUser.username,
+                    type: "survey",
+                    surveyId: surveyRef.id,
+                    question,
+                    options,
+                    text: `📊 Survey: ${question}`,
+                    createdAt: new Date()
+                });
+
+                const convRef = doc(db, "conversations", activeConvId);
+                const convSnap = await getDoc(convRef);
+                let unreadBy = {};
+                if (convSnap.exists()) {
+                    const participants = convSnap.data().participantUsernames || [];
+                    const recipient = participants.find(u => u !== currentUser.username);
+                    unreadBy = convSnap.data().unreadBy || {};
+                    if (recipient) unreadBy[recipient] = true;
+                }
+
+                await updateDoc(convRef, {
+                    updatedAt: new Date(),
+                    lastMessagePreview: `📊 Survey: ${question}`,
+                    unreadBy
+                });
+
+                document.getElementById("survey-modal").classList.add("hidden");
+            } catch (err) {
+                console.error(err);
+                alert("Failed to publish survey.");
             }
         });
 
@@ -1040,7 +1405,6 @@
                 createdAt: new Date()
             });
 
-            // Fetch conversation to mark unread for the recipient
             const convRef = doc(db, "conversations", activeConvId);
             const convSnap = await getDoc(convRef);
             let unreadBy = {};
