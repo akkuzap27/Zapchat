@@ -107,7 +107,7 @@
         .sidebar-nav-links li svg { width: 20px; height: 20px; stroke-width: 2px; }
         .sidebar-nav-links li:hover, .sidebar-nav-links li.active { background: var(--lavender-light); color: var(--purple-primary); border-right: 4px solid var(--purple-primary); }
 
-        .mobile-bottom-nav { display: none; background: white; border-top: 1px solid var(--border-color); height: 68px; justify-content: space-around; align-items: center; flex-shrink: 0; width: 100%; }
+        .mobile-bottom-nav { display: none; background: white; border-top: 1px solid var(--border-color); height: 68px; justify-content: space-around; align-items: center; flex-shrink: 0; width: 100%; z-index: 120; }
         .nav-item-mobile { background: none; border: none; display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; gap: 4px; font-family: var(--font-main); }
         .nav-item-mobile svg { width: 22px; height: 22px; stroke-width: 2px; }
         .nav-item-mobile.active { color: var(--purple-primary); }
@@ -118,7 +118,7 @@
         .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .view-header h2 { font-size: 24px; color: var(--purple-primary); font-weight: 700; }
 
-        .conversations-list, .user-list { display: flex; flex-direction: column; gap: 10px; width: 100%; padding-bottom: 80px; }
+        .conversations-list, .user-list { display: flex; flex-direction: column; gap: 10px; width: 100%; padding-bottom: 90px; }
         .conversation-card, .user-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 12px; background: var(--bg-notebook); border: 1px solid var(--border-color); cursor: pointer; width: 100%; transition: transform 0.1s ease, background 0.2s; user-select: none; }
         .conversation-card:hover, .user-card:hover { background: var(--lavender-light); border-color: var(--lavender-accent); }
         .conv-info { flex: 1; min-width: 0; margin-left: 14px; }
@@ -134,7 +134,7 @@
         .user-card-details h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
         .user-card-details p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .fab-create-group { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--purple-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); border: none; cursor: pointer; z-index: 150; transition: transform 0.2s; }
+        .fab-create-group { position: fixed; bottom: 85px; right: 28px; width: 56px; height: 56px; background: var(--purple-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); border: none; cursor: pointer; z-index: 150; transition: transform 0.2s; }
         .fab-create-group:hover { transform: scale(1.08); background: var(--purple-hover); }
 
         .profile-card, .settings-list, .developer-card { max-width: 520px; margin: 0 auto; padding: 36px; width: 100%; }
@@ -218,6 +218,7 @@
             .desktop-sidebar { display: none; }
             .mobile-bottom-nav { display: flex; }
             .view-section { padding: 20px; padding-bottom: 90px; }
+            .fab-create-group { bottom: 80px; right: 20px; }
         }
     </style>
 </head>
@@ -454,7 +455,7 @@
                     </div>
                 </section>
 
-                <!-- Floating Action Button for Group Creation (Constant/Fixed position) -->
+                <!-- Floating Action Button for Group Creation (Constant/Fixed position, hidden during active chat) -->
                 <button id="fab-group-btn" class="fab-create-group" title="Create Group">👥</button>
 
                 <!-- 2. FIND USERS VIEW -->
@@ -998,6 +999,8 @@
                 headerAvatar.textContent = user.username.charAt(0).toUpperCase();
             }
 
+            await fetchAllUsers();
+
             const cachedConvs = await getConversationsFromIndexedDB();
             if (cachedConvs && cachedConvs.length > 0) {
                 renderConversationsList(cachedConvs, user.username);
@@ -1051,7 +1054,6 @@
                 renderConversationsList(convs, user.username);
             });
 
-            await fetchAllUsers();
             checkUrlForSurvey();
         }
 
@@ -1114,7 +1116,10 @@
                     otherUsername = conv.participantUsernames.find(u => u !== currentUsername);
                     if (!otherUsername) continue;
 
-                    const foundUser = cachedUsers.find(u => u.username === otherUsername);
+                    let foundUser = allUsersCache.find(u => u.username === otherUsername);
+                    if (!foundUser) {
+                        foundUser = cachedUsers.find(u => u.username === otherUsername);
+                    }
                     const isDeletedUser = !foundUser;
 
                     isOtherVerified = foundUser?.isVerified || false;
@@ -1320,6 +1325,7 @@
         window.openChat = async (convId, friendUsername, friendPhoto = "", friendIsVerified = false, isDeletedUser = false) => {
             activeConvId = convId;
             activeIsGroup = false;
+            document.getElementById("fab-group-btn").classList.add("hidden");
             document.getElementById("group-settings-btn").classList.add("hidden");
             document.getElementById("chat-friend-username").innerHTML = `@${friendUsername} ${isDeletedUser ? '[Deleted Account]' : (friendIsVerified ? VERIFIED_BADGE_HTML : '')}`;
             document.getElementById("chat-friend-username").onclick = isDeletedUser ? null : () => showUserProfile(friendUsername);
@@ -1345,6 +1351,7 @@
         window.openGroupChat = async (convId) => {
             activeConvId = convId;
             activeIsGroup = true;
+            document.getElementById("fab-group-btn").classList.add("hidden");
             document.getElementById("group-settings-btn").classList.remove("hidden");
 
             const convRef = doc(db, "conversations", convId);
@@ -1812,6 +1819,7 @@
             document.getElementById("chat-screen").classList.add("hidden");
             document.getElementById("desktop-sidebar").style.display = "";
             document.getElementById("mobile-bottom-nav").style.display = "";
+            document.getElementById("fab-group-btn").classList.remove("hidden");
             if (msgUnsub) msgUnsub();
             if (presenceUnsub) presenceUnsub();
             if (convUnsub) convUnsub();
