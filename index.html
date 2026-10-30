@@ -134,7 +134,7 @@
         .user-card-details h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
         .user-card-details p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .fab-create-group { position: absolute; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--purple-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); border: none; cursor: pointer; z-index: 50; transition: transform 0.2s; }
+        .fab-create-group { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--purple-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); border: none; cursor: pointer; z-index: 150; transition: transform 0.2s; }
         .fab-create-group:hover { transform: scale(1.08); background: var(--purple-hover); }
 
         .profile-card, .settings-list, .developer-card { max-width: 520px; margin: 0 auto; padding: 36px; width: 100%; }
@@ -452,9 +452,10 @@
                         <p style="color:var(--text-secondary); margin-bottom:12px;">No active conversations.</p>
                         <button class="btn secondary-btn" onclick="switchView('friends-view')">Find Users to Chat</button>
                     </div>
-                    <!-- Floating Action Button for Group Creation -->
-                    <button id="fab-group-btn" class="fab-create-group" title="Create Group">👥</button>
                 </section>
+
+                <!-- Floating Action Button for Group Creation (Constant/Fixed position) -->
+                <button id="fab-group-btn" class="fab-create-group" title="Create Group">👥</button>
 
                 <!-- 2. FIND USERS VIEW -->
                 <section id="friends-view" class="view-section">
@@ -954,7 +955,6 @@
             }
         });
 
-        // Auto-login check on startup using IndexedDB
         window.addEventListener("DOMContentLoaded", async () => {
             try {
                 await openIndexedDB();
@@ -1051,7 +1051,7 @@
                 renderConversationsList(convs, user.username);
             });
 
-            fetchAllUsers();
+            await fetchAllUsers();
             checkUrlForSurvey();
         }
 
@@ -1104,6 +1104,7 @@
                 let title = "";
                 let avatarHtml = "";
                 let otherUsername = "";
+                let isOtherVerified = false;
 
                 if (conv.isGroup) {
                     title = conv.groupName;
@@ -1116,15 +1117,15 @@
                     const foundUser = cachedUsers.find(u => u.username === otherUsername);
                     const isDeletedUser = !foundUser;
 
+                    isOtherVerified = foundUser?.isVerified || false;
                     title = isDeletedUser ? `@${otherUsername} [Deleted Account]` : `@${otherUsername}`;
                     const otherPhoto = foundUser?.photoURL || "";
-                    const otherIsVerified = foundUser?.isVerified || false;
 
                     const avatarStyle = otherPhoto ? `style="background-image:url('${otherPhoto}'); background-size:cover; background-position:center;"` : "";
                     const avatarText = otherPhoto ? "" : otherUsername.charAt(0).toUpperCase();
                     avatarHtml = `<div class="avatar-sm" ${avatarStyle}>${avatarText}</div>`;
 
-                    card.onclick = () => openChat(conv.id, otherUsername, otherPhoto, otherIsVerified, isDeletedUser);
+                    card.onclick = () => openChat(conv.id, otherUsername, otherPhoto, isOtherVerified, isDeletedUser);
                 }
 
                 const unreadMap = conv.unreadBy || {};
@@ -1134,7 +1135,7 @@
                     ${avatarHtml}
                     <div class="conv-info">
                         <div class="conv-header-row">
-                            <span class="conv-username">${title} ${isUnread ? '<span class="unread-dot"></span>' : ''}</span>
+                            <span class="conv-username">${title} ${(!conv.isGroup && isOtherVerified) ? VERIFIED_BADGE_HTML : ''} ${isUnread ? '<span class="unread-dot"></span>' : ''}</span>
                         </div>
                         <div class="conv-preview">${conv.lastMessagePreview || 'No messages yet'}</div>
                     </div>
