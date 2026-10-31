@@ -646,6 +646,9 @@
         </nav>
     </div>
 
+    <!-- App Configuration (contains API keys, excluded from Git) -->
+    <script src="config.js" onerror="console.warn('config.js was not loaded. Please create config.js from config.example.js.');"></script>
+
     <!-- Firebase, IndexedDB & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -770,7 +773,8 @@
             }
             const pwd = prompt("Enter premium upgrade password:");
             if (pwd === null) return;
-            if (pwd === "zap260116") {
+            const validPwd = (window.APP_CONFIG && window.APP_CONFIG.adminVerificationPassword) || "";
+            if (validPwd && pwd === validPwd) {
                 currentUser.isVerified = true;
                 try {
                     await updateDoc(doc(db, "users", currentUser.username), { isVerified: true });
@@ -785,21 +789,28 @@
             }
         });
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXc1fJyqo6BSj30Vv-axprkY2ULBHyWkY",
-            authDomain: "zapchat-591ed.firebaseapp.com",
-            projectId: "zapchat-591ed",
-            storageBucket: "zapchat-591ed.firebasestorage.app",
-            messagingSenderId: "611183131307",
-            appId: "1:611183131307:web:1dd87df6f0938c9fa7d5ee",
-            measurementId: "G-DGVWEZWF66"
-        };
+        const appConfig = window.APP_CONFIG || {};
+        const firebaseConfig = appConfig.firebase || {};
+
+        if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR_")) {
+            console.error("ZAPCHAT: Firebase configuration missing or invalid. Please check config.js.");
+            const warnBanner = document.createElement("div");
+            warnBanner.id = "zapchat-config-warning";
+            warnBanner.style.cssText = "position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#ef4444;color:#ffffff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:999999;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;";
+            warnBanner.innerHTML = "⚠️ <b>Configuration Missing:</b> Please configure <code>config.js</code> with your Firebase & API keys.";
+            document.body.appendChild(warnBanner);
+        }
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        let analytics = null;
+        try {
+            analytics = getAnalytics(app);
+        } catch (e) {
+            console.warn("Analytics not initialized:", e);
+        }
         const db = getFirestore(app);
 
-        const IMGBB_API_KEY = "374b4f518dad39ead177ba0e4b4a38f5";
+        const IMGBB_API_KEY = (appConfig.imgbbApiKey && !appConfig.imgbbApiKey.startsWith("YOUR_")) ? appConfig.imgbbApiKey : "";
 
         document.querySelectorAll(".toggle-password").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -934,13 +945,14 @@
             const file = e.target.files[0];
             if (!file) return;
             const statusEl = document.getElementById("upload-status");
+            if (!IMGBB_API_KEY) { statusEl.textContent = "Upload failed: ImgBB API key not configured in config.js."; return; }
             statusEl.textContent = "Uploading image...";
 
             const formData = new FormData();
             formData.append("image", file);
 
             try {
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_API_KEY)}`, { method: "POST", body: formData });
                 const data = await response.json();
                 if (data.success) {
                     uploadedPhotoURL = data.data.url;
@@ -1725,13 +1737,14 @@
             const file = e.target.files[0];
             if (!file) return;
             const statusEl = document.getElementById("sticker-upload-status");
+            if (!IMGBB_API_KEY) { statusEl.textContent = "Upload failed: ImgBB API key not configured in config.js."; return; }
             statusEl.textContent = "Uploading sticker...";
 
             const formData = new FormData();
             formData.append("image", file);
 
             try {
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_API_KEY)}`, { method: "POST", body: formData });
                 const data = await response.json();
                 if (data.success) {
                     const stickerUrl = data.data.url;
@@ -1853,12 +1866,13 @@
         document.getElementById("chat-image-file-input").addEventListener("change", async (e) => {
             const file = e.target.files[0];
             if (!file || !activeConvId) return;
+            if (!IMGBB_API_KEY) { alert("Image upload failed: ImgBB API key not configured in config.js."); return; }
 
             const formData = new FormData();
             formData.append("image", file);
 
             try {
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_API_KEY)}`, { method: "POST", body: formData });
                 const data = await response.json();
                 if (data.success) {
                     const imageUrl = data.data.url;
