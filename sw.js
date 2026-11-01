@@ -1,7 +1,9 @@
-const CACHE_NAME = 'zapchat-cache-v1';
+const CACHE_NAME = 'zapchat-cache-v6';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
+    '/style.css',
+    '/app.js',
     '/manifest.json'
 ];
 
