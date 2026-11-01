@@ -5,222 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ZAPCHAT ⚡ — Connect. Chat. Stay Connected.</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#7c3aed">
+    <meta name="theme-color" content="#4F46E5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-notebook: #f9f8fc;
-            --line-color: #edeaf5;
-            --text-primary: #1e1b2e;
-            --text-secondary: #6e6885;
-            --lavender-accent: #b19cd9;
-            --lavender-light: #f3eff9;
-            --purple-primary: #7c3aed;
-            --purple-hover: #6d28d9;
-            --bubble-sent: #ede9fe;
-            --bubble-received: #ffffff;
-            --border-color: #e4e1f0;
-            --danger-color: #ef4444;
-            --success-color: #10b981;
-            --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.08), 0 8px 10px -6px rgba(124, 58, 237, 0.08);
-            --font-main: 'Plus Jakarta Sans', sans-serif;
-            --font-heading: 'Outfit', sans-serif;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { 
-            font-family: var(--font-main); 
-            background-color: var(--bg-primary); 
-            color: var(--text-primary); 
-            width: 100vw; 
-            height: 100vh; 
-            height: 100dvh;
-            overflow: hidden; 
-            position: fixed;
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        h1, h2, h3, h4, .brand-header h1, .sidebar-brand h2, .view-header h2 {
-            font-family: var(--font-heading);
-            letter-spacing: -0.02em;
-        }
-
-        .notebook-paper {
-            background-color: var(--bg-notebook);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            border-radius: 16px;
-        }
-
-        .offline-banner { background: #f59e0b; color: white; text-align: center; padding: 8px; font-size: 13px; font-weight: 500; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; transition: transform 0.3s ease; }
-        .offline-banner.hidden { transform: translateY(-100%); }
-        .hidden { display: none !important; }
-
-        .btn { padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; font-family: var(--font-main); transition: all 0.2s ease; font-size: 14px; }
-        .primary-btn { background-color: var(--purple-primary); color: white; width: 100%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25); }
-        .primary-btn:hover { background-color: var(--purple-hover); transform: translateY(-1px); }
-        .secondary-btn { background-color: var(--lavender-light); color: var(--purple-primary); border: 1px solid var(--lavender-accent); }
-        .primary-btn-sm, .secondary-btn-sm, .btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 8px; border: none; cursor: pointer; font-family: var(--font-main); font-weight: 600; }
-        .primary-btn-sm { background: var(--purple-primary); color: white; }
-        .secondary-btn-sm { background: var(--lavender-light); color: var(--purple-primary); }
-        .danger-btn-sm { background: var(--danger-color); color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
-
-        input, textarea, select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 10px; font-family: var(--font-main); background: white; outline: none; font-size: 14px; color: var(--text-primary); transition: border-color 0.2s; }
-        input:focus, textarea:focus, select:focus { border-color: var(--purple-primary); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); }
-
-        .auth-screen { display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh; height: 100dvh; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); padding: 20px; position: absolute; top: 0; left: 0; z-index: 200; }
-        .auth-card { width: 100%; max-width: 420px; padding: 36px; }
-        .brand-header { text-align: center; margin-bottom: 28px; }
-        .brand-header h1 { font-size: 32px; color: var(--purple-primary); font-weight: 700; margin-bottom: 4px; }
-        .brand-header p { font-size: 14px; color: var(--text-secondary); }
-        .auth-form h2 { font-size: 20px; margin-bottom: 20px; color: var(--text-primary); font-weight: 600; }
-        .input-group { margin-bottom: 18px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
-        .input-hint { font-size: 11px; color: var(--text-secondary); margin-top: 4px; display: block; }
-        .password-wrapper { position: relative; display: flex; align-items: center; }
-        .toggle-password { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; }
-        .error-msg { color: var(--danger-color); font-size: 12px; margin-bottom: 12px; min-height: 16px; font-weight: 500; }
-        .switch-auth { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-secondary); }
-        .switch-auth a { color: var(--purple-primary); text-decoration: none; font-weight: 600; }
-
-        .app-screen { display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh; position: absolute; top: 0; left: 0; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: white; border-bottom: 1px solid var(--border-color); height: 68px; flex-shrink: 0; }
-        .header-brand { display: flex; align-items: center; gap: 8px; }
-        .header-brand h2 { font-size: 22px; color: var(--purple-primary); font-weight: 700; }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-        .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 8px; border-radius: 10px; color: var(--text-primary); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .icon-btn:hover { background: var(--lavender-light); color: var(--purple-primary); }
-
-        .avatar-sm, .avatar-lg { display: flex; align-items: center; justify-content: center; background: var(--lavender-accent); color: white; font-weight: 600; border-radius: 50%; overflow: hidden; background-size: cover; background-position: center; font-family: var(--font-heading); position: relative; }
-        .avatar-sm { width: 40px; height: 40px; font-size: 15px; flex-shrink: 0; }
-        .avatar-lg { width: 96px; height: 96px; font-size: 34px; margin: 0 auto 16px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 3px solid var(--purple-primary); }
-
-        .app-body { display: flex; flex: 1; overflow: hidden; width: 100%; position: relative; }
-        .desktop-sidebar { width: 280px; background: var(--bg-notebook); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; }
-        .sidebar-brand { padding: 0 24px 20px 24px; border-bottom: 1px solid var(--border-color); }
-        .sidebar-brand h2 { color: var(--purple-primary); font-size: 22px; font-weight: 700; }
-        .sidebar-nav-links { list-style: none; padding: 16px 0; }
-        .sidebar-nav-links li { display: flex; align-items: center; gap: 14px; padding: 14px 24px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text-secondary); transition: all 0.2s; }
-        .sidebar-nav-links li svg { width: 20px; height: 20px; stroke-width: 2px; }
-        .sidebar-nav-links li:hover, .sidebar-nav-links li.active { background: var(--lavender-light); color: var(--purple-primary); border-right: 4px solid var(--purple-primary); }
-
-        .mobile-bottom-nav { display: none; background: white; border-top: 1px solid var(--border-color); height: 68px; justify-content: space-around; align-items: center; flex-shrink: 0; width: 100%; z-index: 120; }
-        .nav-item-mobile { background: none; border: none; display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); cursor: pointer; gap: 4px; font-family: var(--font-main); }
-        .nav-item-mobile svg { width: 22px; height: 22px; stroke-width: 2px; }
-        .nav-item-mobile.active { color: var(--purple-primary); }
-
-        .main-content-area { flex: 1; position: relative; overflow: hidden; background: white; height: 100%; }
-        .view-section { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: none; flex-direction: column; padding: 28px; overflow-y: auto; width: 100%; height: 100%; }
-        .view-section.active { display: flex; }
-        .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-        .view-header h2 { font-size: 24px; color: var(--purple-primary); font-weight: 700; }
-
-        .conversations-list, .user-list { display: flex; flex-direction: column; gap: 10px; width: 100%; padding-bottom: 90px; }
-        .conversation-card, .user-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 12px; background: var(--bg-notebook); border: 1px solid var(--border-color); cursor: pointer; width: 100%; transition: transform 0.1s ease, background 0.2s; user-select: none; }
-        .conversation-card:hover, .user-card:hover { background: var(--lavender-light); border-color: var(--lavender-accent); }
-        .conv-info { flex: 1; min-width: 0; margin-left: 14px; }
-        .conv-header-row { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
-        .conv-username { font-weight: 700; font-size: 15px; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
-        .verified-badge { width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; flex-shrink: 0; }
-        .verified-badge svg { width: 100%; height: 100%; }
-        .unread-dot { width: 9px; height: 9px; background-color: var(--danger-color); border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
-        .conv-preview { font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; }
-
-        .user-card-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
-        .user-card-details { min-width: 0; flex: 1; }
-        .user-card-details h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
-        .user-card-details p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .fab-create-group { position: fixed; bottom: 85px; right: 28px; width: 56px; height: 56px; background: var(--purple-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); border: none; cursor: pointer; z-index: 150; transition: transform 0.2s; }
-        .fab-create-group:hover { transform: scale(1.08); background: var(--purple-hover); }
-
-        .profile-card, .settings-list, .developer-card { max-width: 520px; margin: 0 auto; padding: 36px; width: 100%; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-        .readonly-input { background-color: #f3f2f8; color: #6e6885; }
-        .setting-item { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; font-weight: 600; font-size: 14px; transition: color 0.2s; }
-        .setting-item:hover { color: var(--purple-primary); }
-        .setting-item.danger { color: var(--danger-color); }
-        .setting-item svg { width: 18px; height: 18px; color: var(--text-secondary); }
-
-        .developer-card { text-align: center; }
-        .dev-avatar { font-size: 40px; width: 90px; height: 90px; background: var(--lavender-light); display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 16px auto; border: 2px solid var(--lavender-accent); color: var(--purple-primary); }
-        .developer-card h3 { font-size: 24px; color: var(--purple-primary); margin-bottom: 4px; font-weight: 700; }
-        .dev-role { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; }
-        .dev-bio { font-size: 14px; line-height: 1.6; margin-bottom: 24px; color: var(--text-secondary); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-card { width: 100%; max-width: 420px; padding: 32px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
-        .close-modal { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
-
-        .image-viewer-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; backdrop-filter: blur(8px); }
-        .viewer-header { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; z-index: 5010; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); }
-        .viewer-actions { display: flex; gap: 12px; align-items: center; }
-        .viewer-btn { background: rgba(255, 255, 255, 0.15); border: none; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px); transition: background 0.2s; }
-        .viewer-btn:hover { background: rgba(255, 255, 255, 0.3); }
-        .viewer-close-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 4px 12px; }
-        .viewer-container { flex: 1; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: auto; position: relative; padding: 40px; }
-        .viewer-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.2s ease; cursor: grab; user-select: none; }
-        .viewer-img:active { cursor: grabbing; }
-
-        .sticker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 260px; overflow-y: auto; margin-top: 12px; padding: 4px; }
-        .sticker-item { width: 100%; aspect-ratio: 1; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid var(--border-color); transition: transform 0.1s; }
-        .sticker-item:hover { transform: scale(1.04); border-color: var(--purple-primary); }
-
-        .chat-screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; flex-direction: column; z-index: 100; width: 100%; height: 100%; }
-        .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: white; border-bottom: 1px solid var(--border-color); height: 68px; flex-shrink: 0; }
-        .chat-header-left { display: flex; align-items: center; gap: 14px; }
-        .chat-friend-info h3 { font-size: 16px; font-weight: 700; cursor: pointer; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; }
-        .status-indicator { font-size: 12px; color: var(--text-secondary); font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        .status-indicator.online { color: var(--success-color); }
-        .status-indicator::before { content: ''; width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; display: inline-block; }
-        .status-indicator.online::before { background: var(--success-color); }
-        
-        .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; background-color: var(--bg-notebook); }
-        .message-bubble { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14px; word-break: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.03); user-select: none; position: relative; }
-        .message-bubble.sent { background-color: var(--bubble-sent); align-self: flex-end; border-bottom-right-radius: 4px; }
-        .message-bubble.received { background-color: var(--bubble-received); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
-        .chat-image { max-width: 100%; border-radius: 10px; margin-bottom: 4px; display: block; max-height: 250px; object-fit: cover; cursor: pointer; }
-        .chat-sticker { width: 120px; height: 120px; object-fit: contain; display: block; cursor: pointer; }
-        .msg-sender-name { font-size: 11px; font-weight: 700; color: var(--purple-primary); margin-bottom: 3px; font-family: var(--font-heading); }
-
-        .reply-preview-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--lavender-light); border-top: 1px solid var(--border-color); font-size: 12px; }
-        .reply-content-box { border-left: 3px solid var(--purple-primary); padding-left: 8px; margin-bottom: 6px; background: rgba(0,0,0,0.02); padding-top: 4px; padding-bottom: 4px; border-radius: 4px; font-size: 12px; color: var(--text-secondary); }
-
-        .reaction-popup { position: absolute; background: white; border: 1px solid var(--border-color); border-radius: 30px; box-shadow: var(--shadow); padding: 6px 12px; display: flex; gap: 8px; z-index: 2500; bottom: 100%; margin-bottom: 8px; left: 0; }
-        .reaction-emoji-btn { background: none; border: none; font-size: 20px; cursor: pointer; transition: transform 0.1s; }
-        .reaction-emoji-btn:hover { transform: scale(1.3); }
-        .message-reactions-badge { display: flex; gap: 4px; position: absolute; bottom: -10px; right: 12px; background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 2px 6px; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        .message-composer { display: flex; flex-direction: column; background: white; border-top: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
-        .composer-input-row { display: flex; align-items: flex-end; gap: 8px; padding: 16px 24px; }
-        .message-composer textarea { resize: none; max-height: 120px; line-height: 1.5; }
-        .composer-plus-btn { background: var(--lavender-light); color: var(--purple-primary); border: 1px solid var(--lavender-accent); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
-        .composer-plus-btn:hover { background: var(--lavender-accent); color: white; }
-        
-        .attachment-menu { position: absolute; bottom: 75px; left: 24px; background: white; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow); padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 150; width: 180px; }
-        .attachment-menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-primary); background: none; border: none; cursor: pointer; text-align: left; width: 100%; transition: background 0.2s; }
-        .attachment-menu-item:hover { background: var(--lavender-light); color: var(--purple-primary); }
-
-        .context-action-menu { position: absolute; background: white; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow); padding: 6px; z-index: 2000; width: 160px; display: flex; flex-direction: column; gap: 4px; }
-        .context-action-item { padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--danger-color); background: none; border: none; border-radius: 6px; cursor: pointer; text-align: left; width: 100%; }
-        .context-action-item:hover { background: #fef2f2; }
-
-        .survey-bubble-card { background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-top: 4px; width: 260px; }
-        .survey-bubble-title { font-weight: 700; font-size: 14px; margin-bottom: 10px; color: var(--purple-primary); }
-        .survey-link-tag { display: inline-block; margin-top: 6px; font-size: 11px; color: var(--purple-primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
-
-        @media (max-width: 768px) {
-            .desktop-sidebar { display: none; }
-            .mobile-bottom-nav { display: flex; }
-            .view-section { padding: 20px; padding-bottom: 90px; }
-            .fab-create-group { bottom: 80px; right: 20px; }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="offline-banner" class="offline-banner hidden">
@@ -326,6 +115,19 @@
             <h1 style="font-size:26px; color:var(--purple-primary); margin-bottom:8px;">ZAPCHAT SURVEY 📊</h1>
             <p style="font-size:13px; color:var(--text-secondary); margin-bottom:24px;">No login required. Vote anonymously!</p>
             <div id="public-survey-content" style="text-align:left;"></div>
+        </div>
+    </div>
+
+    <!-- FORWARD MESSAGE MODAL -->
+    <div id="forward-modal" class="modal-overlay hidden">
+        <div class="modal-card notebook-paper" style="max-width:440px; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <h3 style="color:var(--text-primary); font-size:18px; font-weight:700;">Forward Message ↗️</h3>
+                <button class="close-modal" id="close-forward-modal">✕</button>
+            </div>
+            <div id="forward-msg-preview" class="forward-msg-preview"></div>
+            <p style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin:14px 0 8px 0;">Share to chat:</p>
+            <div id="forward-chats-list" class="forward-chats-list"></div>
         </div>
     </div>
 
@@ -447,23 +249,27 @@
             <main class="main-content-area">
                 <!-- 1. CHATS VIEW -->
                 <section id="chats-view" class="view-section active">
-                    <div class="view-header"><h2>Chats</h2></div>
+                    <div class="view-header">
+                        <h2>Chats</h2>
+                        <button id="fab-group-btn" class="header-action-btn" title="Create Group">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                            <span>New Group</span>
+                        </button>
+                    </div>
                     <div id="conversations-list" class="conversations-list"></div>
-                    <div id="chats-empty-state" class="hidden" style="text-align:center; margin-top:50px;">
-                        <p style="color:var(--text-secondary); margin-bottom:12px;">No active conversations.</p>
+                    <div id="chats-empty-state" class="hidden" style="text-align:center; padding: 48px 20px;">
+                        <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">No active conversations yet.</p>
                         <button class="btn secondary-btn" onclick="switchView('friends-view')">Find Users to Chat</button>
                     </div>
                 </section>
-
-                <!-- Floating Action Button for Group Creation (Constant/Fixed position, hidden during active chat) -->
-                <button id="fab-group-btn" class="fab-create-group" title="Create Group">👥</button>
 
                 <!-- 2. FIND USERS VIEW -->
                 <section id="friends-view" class="view-section">
                     <div class="view-header">
                         <h2>Find Users</h2>
-                        <div style="display:flex; gap:8px; width:280px;">
-                            <input type="text" id="user-search-input" placeholder="Search username...">
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="user-search-input" placeholder="Search by username...">
                         </div>
                     </div>
                     <div id="search-results-list" class="user-list"></div>
@@ -512,42 +318,42 @@
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 Get Verified (ZAPCHAT Pro)
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         <div class="setting-item" id="install-pwa-btn" style="color: var(--purple-primary);">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Install ZAPCHAT App
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         <div class="setting-item" onclick="switchView('profile-view')">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 Edit Profile & Picture
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         <div class="setting-item" onclick="switchView('developer-view')">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                                 Meet the Developer (AKKU ZAP)
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         <div class="setting-item danger" id="delete-my-account-btn">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 Delete My Account
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                         <div class="setting-item danger" id="logout-btn">
                             <span style="display:flex; align-items:center; gap:10px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                 Log Out
                             </span>
-                            <span>➔</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                     </div>
                 </section>
@@ -603,6 +409,9 @@
                     <div class="message-composer">
                         <div class="composer-input-row">
                             <button id="composer-plus-btn" class="composer-plus-btn" title="Add attachment">+</button>
+                            <button id="voice-record-btn" type="button" class="composer-voice-btn" title="Record Voice Note">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                            </button>
                             <div id="attachment-menu" class="attachment-menu hidden">
                                 <button type="button" id="menu-image-btn" class="attachment-menu-item">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -620,6 +429,36 @@
                             <input type="file" id="chat-image-file-input" accept="image/*" class="hidden">
                             <textarea id="message-input" rows="1" placeholder="Type a message..."></textarea>
                             <button id="send-message-btn" class="btn primary-btn-sm">Send</button>
+                        </div>
+                        <div id="voice-recording-bar" class="voice-recording-bar hidden">
+                            <div class="voice-recording-info">
+                                <span class="recording-pulse-dot"></span>
+                                <span id="recording-timer" class="recording-timer">0:00</span>
+                                <div id="voice-vibes-container" class="voice-vibes-container" title="Audio Waveform Vibes">
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                    <span class="vibe-bar"></span>
+                                </div>
+                            </div>
+                            <div class="voice-recording-actions">
+                                <button type="button" id="cancel-voice-record-btn" class="voice-action-btn cancel" title="Cancel recording">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    <span>Cancel</span>
+                                </button>
+                                <button type="button" id="send-voice-record-btn" class="voice-action-btn send" title="Send Voice Note">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                    <span>Send</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -646,6 +485,8 @@
         </nav>
     </div>
 
+    <!-- Main Application Logic (Modular) -->
+    <script type="module" src="app.js"></script>
     <!-- Firebase, IndexedDB & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
