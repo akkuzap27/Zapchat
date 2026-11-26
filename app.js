@@ -1,4 +1,4 @@
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, orderBy, onSnapshot, addDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -239,6 +239,9 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                     password,
                     displayName: username,
                     bio: isOfficialAdmin ? "Official ZapChat Administration Account ⚡" : "Hey there! I'm using ZAPCHAT ⚡",
+                    dob: "",
+                    followers: [],
+                    followersCount: 0,
                     photoURL: "",
                     isVerified: isOfficialAdmin ? true : false,
                     createdAt: new Date(),
@@ -386,6 +389,49 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             }
         });
 
+        function getFollowersArray(userObj) {
+            if (!userObj) return [];
+            if (Array.isArray(userObj.followers)) return userObj.followers;
+            return [];
+        }
+
+        function getFollowersCount(userObj) {
+            if (!userObj) return 0;
+            if (typeof userObj.followersCount === "number") return userObj.followersCount;
+            return getFollowersArray(userObj).length;
+        }
+
+        function renderProfileFollowers(followersArr = [], explicitCount = null) {
+            const count = typeof explicitCount === "number" ? explicitCount : followersArr.length;
+            const labelEl = document.getElementById("profile-followers-count-label");
+            const listEl = document.getElementById("profile-followers-list");
+            if (!labelEl || !listEl) return;
+
+            labelEl.textContent = `Followers (${count})`;
+            listEl.innerHTML = "";
+
+            if (!followersArr.length) {
+                listEl.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding:6px 4px;">No followers yet.</p>`;
+                return;
+            }
+
+            followersArr.forEach(followerUsername => {
+                const fUser = allUsersCache.find(u => u.username === followerUsername);
+                const displayLabel = fUser?.displayName ? `@${followerUsername} · ${fUser.displayName}` : `@${followerUsername}`;
+                const row = document.createElement("div");
+                row.className = "follower-row";
+                row.innerHTML = `
+                    ${getAvatarHtml(fUser?.photoURL || "", followerUsername, "avatar-sm")}
+                    <span class="follower-name">${displayLabel}</span>
+                `;
+                row.onclick = () => {
+                    switchView("friends-view");
+                    showUserProfile(followerUsername);
+                };
+                listEl.appendChild(row);
+            });
+        }
+
         async function initApp(user) {
             currentUser = user;
             await openIndexedDB();
@@ -399,7 +445,9 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             document.getElementById("profile-username").value = user.username;
             document.getElementById("profile-display-name").value = user.displayName || "";
             document.getElementById("profile-bio").value = user.bio || "";
+            document.getElementById("profile-dob").value = user.dob || "";
             document.getElementById("profile-created-at").value = user.createdAt ? new Date(user.createdAt.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString() : "Recently";
+            renderProfileFollowers(user.followers || [], user.followersCount);
             
             uploadedPhotoURL = user.photoURL || "";
             const displayEl = document.getElementById("profile-avatar-display");
@@ -417,6 +465,16 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
 
             await fetchAllUsers();
 
+            try {
+                const freshMe = await getDoc(doc(db, "users", user.username));
+                if (freshMe.exists()) {
+                    const freshData = freshMe.data();
+                    currentUser = { ...currentUser, ...freshData };
+                    await saveSessionToIndexedDB(currentUser);
+                    renderProfileFollowers(currentUser.followers || [], currentUser.followersCount);
+                }
+            } catch (e) {}
+
             const cachedConvs = await getConversationsFromIndexedDB();
             if (cachedConvs && cachedConvs.length > 0) {
                 allConversationsCache = cachedConvs;
@@ -432,17 +490,27 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             if (presenceInterval) clearInterval(presenceInterval);
             presenceInterval = setInterval(updatePresence, 15000);
 
+            document.getElementById("toggle-followers-btn").onclick = () => {
+                const listEl = document.getElementById("profile-followers-list");
+                const chevronEl = document.getElementById("followers-chevron");
+                const isHidden = listEl.classList.toggle("hidden");
+                chevronEl.textContent = isHidden ? "▾" : "▴";
+            };
+
             document.getElementById("save-profile-btn").onclick = async () => {
                 const newName = document.getElementById("profile-display-name").value.trim();
                 const newBio = document.getElementById("profile-bio").value.trim();
+                const newDob = document.getElementById("profile-dob").value;
 
                 currentUser.displayName = newName;
                 currentUser.bio = newBio;
+                currentUser.dob = newDob;
                 currentUser.photoURL = uploadedPhotoURL;
 
                 await updateDoc(doc(db, "users", user.username), { 
                     displayName: newName, 
                     bio: newBio,
+                    dob: newDob,
                     photoURL: uploadedPhotoURL
                 });
 
@@ -622,12 +690,61 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                 snap.forEach(d => allUsersCache.push(d.data()));
                 await saveUsersToIndexedDB(allUsersCache);
                 renderUserList(allUsersCache);
+                if (currentUser) {
+                    const me = allUsersCache.find(u => u.username === currentUser.username);
+                    if (me) {
+                        currentUser = { ...currentUser, ...me };
+                        await saveSessionToIndexedDB(currentUser);
+                        renderProfileFollowers(currentUser.followers || [], currentUser.followersCount);
+                    }
+                }
             } catch (err) {
                 document.getElementById("offline-banner").classList.remove("hidden");
                 allUsersCache = await getUsersFromIndexedDB();
                 renderUserList(allUsersCache);
             }
         }
+
+        window.toggleFollowUser = async (targetUsername) => {
+            if (!currentUser || !targetUsername || targetUsername === currentUser.username) return;
+
+            const targetRef = doc(db, "users", targetUsername);
+            const targetSnap = await getDoc(targetRef);
+            if (!targetSnap.exists()) return;
+
+            const targetData = targetSnap.data();
+            const currentFollowers = Array.isArray(targetData.followers) ? [...targetData.followers] : [];
+            const alreadyFollowing = currentFollowers.includes(currentUser.username);
+
+            const updatedFollowers = alreadyFollowing
+                ? currentFollowers.filter(u => u !== currentUser.username)
+                : [...currentFollowers, currentUser.username];
+            const updatedCount = updatedFollowers.length;
+
+            await updateDoc(targetRef, {
+                followers: updatedFollowers,
+                followersCount: updatedCount
+            });
+
+            allUsersCache = allUsersCache.map(u =>
+                u.username === targetUsername
+                    ? { ...u, followers: updatedFollowers, followersCount: updatedCount }
+                    : u
+            );
+            await saveUsersToIndexedDB(allUsersCache);
+            renderUserList(allUsersCache);
+
+            const modalFollowBtn = document.getElementById("modal-follow-btn");
+            const modalFollowersEl = document.getElementById("modal-followers-count");
+            if (modalFollowBtn && !document.getElementById("profile-modal").classList.contains("hidden")) {
+                const nowFollowing = updatedFollowers.includes(currentUser.username);
+                modalFollowBtn.textContent = nowFollowing ? "Following ✓" : "Follow";
+                modalFollowBtn.className = nowFollowing ? "btn primary-btn" : "btn secondary-btn";
+            }
+            if (modalFollowersEl) {
+                modalFollowersEl.textContent = `${updatedCount} ${updatedCount === 1 ? "Follower" : "Followers"}`;
+            }
+        };
 
         function renderUserList(users) {
             const list = document.getElementById("search-results-list");
@@ -637,6 +754,10 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             users.forEach(u => {
                 if (currentUser && u.username === currentUser.username) return;
                 found = true;
+                const followersArr = getFollowersArray(u);
+                const followersCount = getFollowersCount(u);
+                const isFollowing = currentUser ? followersArr.includes(currentUser.username) : false;
+
                 const card = document.createElement("div");
                 card.className = "user-card";
                 
@@ -645,9 +766,15 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                 card.innerHTML = `
                     <div class="user-card-info" onclick="showUserProfile('${u.username}')">
                         ${avatarHtml}
-                        <div class="user-card-details"><h4>@${u.username} ${u.isVerified ? VERIFIED_BADGE_HTML : ''}</h4><p>${u.displayName || u.username}</p></div>
+                        <div class="user-card-details">
+                            <h4>@${u.username} ${u.isVerified ? VERIFIED_BADGE_HTML : ''}</h4>
+                            <p>${u.displayName || u.username} · ${followersCount} ${followersCount === 1 ? "follower" : "followers"}</p>
+                        </div>
                     </div>
-                    <button class="btn primary-btn-sm" onclick="startChatWith('${u.username}')">Message</button>
+                    <div class="user-card-actions">
+                        <button class="btn ${isFollowing ? "secondary-btn-sm" : "primary-btn-sm"}" onclick="event.stopPropagation(); toggleFollowUser('${u.username}')">${isFollowing ? "Following ✓" : "Follow"}</button>
+                        <button class="btn primary-btn-sm" onclick="event.stopPropagation(); startChatWith('${u.username}')">Message</button>
+                    </div>
                 `;
                 list.appendChild(card);
             });
@@ -663,6 +790,11 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
 
         window.showUserProfile = async (username) => {
             let user = allUsersCache.find(u => u.username === username);
+            try {
+                const freshSnap = await getDoc(doc(db, "users", username));
+                if (freshSnap.exists()) user = freshSnap.data();
+            } catch (e) {}
+
             if (!user) {
                 const cached = await getUsersFromIndexedDB();
                 user = cached.find(u => u.username === username);
@@ -678,10 +810,26 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                 modalAvatar.textContent = user.username.charAt(0).toUpperCase();
             }
 
+            const followersArr = getFollowersArray(user);
+            const followersCount = getFollowersCount(user);
+            const isFollowing = currentUser ? followersArr.includes(currentUser.username) : false;
+
             document.getElementById("modal-username").innerHTML = `@${user.username} ${user.isVerified ? VERIFIED_BADGE_HTML : ''}`;
             document.getElementById("modal-display-name").textContent = user.displayName || user.username;
+            document.getElementById("modal-followers-count").textContent = `${followersCount} ${followersCount === 1 ? "Follower" : "Followers"}`;
             document.getElementById("modal-bio").textContent = user.bio || "No bio available.";
+            document.getElementById("modal-dob").textContent = user.dob ? `DOB: ${new Date(user.dob).toLocaleDateString()}` : "DOB: Not set";
             document.getElementById("modal-joined").textContent = user.createdAt ? `Joined: ${new Date(user.createdAt.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString()}` : "";
+
+            const followBtn = document.getElementById("modal-follow-btn");
+            if (currentUser && currentUser.username === user.username) {
+                followBtn.classList.add("hidden");
+            } else {
+                followBtn.classList.remove("hidden");
+                followBtn.textContent = isFollowing ? "Following ✓" : "Follow";
+                followBtn.className = isFollowing ? "btn primary-btn" : "btn secondary-btn";
+                followBtn.onclick = () => toggleFollowUser(user.username);
+            }
             
             document.getElementById("modal-chat-btn").onclick = () => {
                 document.getElementById("profile-modal").classList.add("hidden");

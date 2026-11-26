@@ -531,6 +531,7 @@
         }
 
         .user-card-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
+        .user-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .user-card-details { min-width: 0; flex: 1; }
         .user-card-details h4 { 
             font-size: 14px; 
@@ -563,6 +564,46 @@
             border-radius: 16px; 
             box-shadow: var(--shadow-sm); 
         }
+
+        .followers-box {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+        }
+        .followers-toggle-btn {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-surface-hover);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: var(--font-main);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .followers-list {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-surface);
+        }
+        .follower-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+        }
+        .follower-row:last-child { border-bottom: none; }
+        .follower-row:hover { background: var(--bg-surface-hover); }
+        .follower-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
         
         .form-group { margin-bottom: 18px; }
         .form-group label { 

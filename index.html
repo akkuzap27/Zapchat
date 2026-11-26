@@ -22,10 +22,15 @@
             <button class="close-modal" id="close-profile-modal">✕</button>
             <div id="modal-avatar" class="avatar-lg">U</div>
             <h3 id="modal-username" style="color:var(--purple-primary); margin-bottom:4px; font-size:20px; display:flex; align-items:center; justify-content:center; gap:6px;">@username</h3>
-            <p id="modal-display-name" style="font-weight:700; margin-bottom:12px; font-size:15px;"></p>
-            <p id="modal-bio" style="font-size:13px; color:var(--text-secondary); margin-bottom:20px; padding:0 10px; line-height:1.5;"></p>
-            <p id="modal-joined" style="font-size:11px; color:var(--text-secondary); margin-bottom:24px; font-weight:500;"></p>
-            <button id="modal-chat-btn" class="btn primary-btn">Start Message</button>
+            <p id="modal-display-name" style="font-weight:700; margin-bottom:8px; font-size:15px;"></p>
+            <p id="modal-followers-count" style="font-size:12px; font-weight:600; color:var(--accent-primary); margin-bottom:10px;">0 Followers</p>
+            <p id="modal-bio" style="font-size:13px; color:var(--text-secondary); margin-bottom:14px; padding:0 10px; line-height:1.5;"></p>
+            <p id="modal-dob" style="font-size:12px; color:var(--text-secondary); margin-bottom:6px; font-weight:500;"></p>
+            <p id="modal-joined" style="font-size:11px; color:var(--text-secondary); margin-bottom:20px; font-weight:500;"></p>
+            <div style="display:flex; gap:10px;">
+                <button id="modal-follow-btn" class="btn secondary-btn" style="flex:1;">Follow</button>
+                <button id="modal-chat-btn" class="btn primary-btn" style="flex:1;">Start Message</button>
+            </div>
         </div>
     </div>
 
@@ -289,8 +294,17 @@
                         <div class="form-group"><label>Username</label><input type="text" id="profile-username" placeholder="Your username"></div>
                         <div class="form-group"><label>Display Name</label><input type="text" id="profile-display-name" placeholder="Your display name"></div>
                         <div class="form-group"><label>Short Bio</label><textarea id="profile-bio" rows="3" placeholder="Tell your friends about yourself..."></textarea></div>
+                        <div class="form-group"><label>Date of Birth</label><input type="date" id="profile-dob"></div>
                         <div class="form-group"><label>Member Since</label><input type="text" id="profile-created-at" readonly class="readonly-input"></div>
                         <button id="save-profile-btn" class="btn primary-btn">Save Changes</button>
+
+                        <div class="followers-box">
+                            <button type="button" id="toggle-followers-btn" class="followers-toggle-btn">
+                                <span id="profile-followers-count-label">Followers (0)</span>
+                                <span id="followers-chevron">▾</span>
+                            </button>
+                            <div id="profile-followers-list" class="followers-list hidden"></div>
+                        </div>
                     </div>
                 </section>
 
