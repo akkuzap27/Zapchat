@@ -532,6 +532,12 @@
 
         .user-card-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
         .user-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .user-card-actions .btn,
+        .user-card-actions .primary-btn-sm,
+        .user-card-actions .secondary-btn-sm {
+            min-width: 86px;
+            justify-content: center;
+        }
         .user-card-details { min-width: 0; flex: 1; }
         .user-card-details h4 { 
             font-size: 14px; 
@@ -1013,6 +1019,15 @@
             .message-bubble { max-width: 82%; }
             .auth-card { padding: 28px 20px; }
             .search-input-wrapper { max-width: 100%; }
+            .user-card { padding: 12px 14px; gap: 10px; }
+            .user-card-info { gap: 10px; }
+            .user-card-actions .btn,
+            .user-card-actions .primary-btn-sm,
+            .user-card-actions .secondary-btn-sm {
+                min-width: 76px;
+                padding: 6px 11px;
+                font-size: 12px;
+            }
         }
 
         @media (min-width: 769px) {
@@ -1057,7 +1072,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #FEF2F2;
+            background: #FEF2E2;
             border: 1px solid #FECACA;
             border-radius: 12px;
             padding: 10px 16px;

@@ -738,8 +738,8 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             const modalFollowersEl = document.getElementById("modal-followers-count");
             if (modalFollowBtn && !document.getElementById("profile-modal").classList.contains("hidden")) {
                 const nowFollowing = updatedFollowers.includes(currentUser.username);
-                modalFollowBtn.textContent = nowFollowing ? "Following ✓" : "Follow";
-                modalFollowBtn.className = nowFollowing ? "btn primary-btn" : "btn secondary-btn";
+                modalFollowBtn.textContent = nowFollowing ? "Unfollow" : "Follow";
+                modalFollowBtn.className = nowFollowing ? "btn secondary-btn" : "btn primary-btn";
             }
             if (modalFollowersEl) {
                 modalFollowersEl.textContent = `${updatedCount} ${updatedCount === 1 ? "Follower" : "Followers"}`;
@@ -763,6 +763,10 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                 
                 const avatarHtml = getAvatarHtml(u.photoURL, u.username, "avatar-sm");
 
+                const actionBtnHtml = isFollowing
+                    ? `<button class="btn primary-btn-sm" onclick="event.stopPropagation(); startChatWith('${u.username}')">Message</button>`
+                    : `<button class="btn primary-btn-sm" onclick="event.stopPropagation(); toggleFollowUser('${u.username}')">Follow</button>`;
+
                 card.innerHTML = `
                     <div class="user-card-info" onclick="showUserProfile('${u.username}')">
                         ${avatarHtml}
@@ -772,8 +776,7 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
                         </div>
                     </div>
                     <div class="user-card-actions">
-                        <button class="btn ${isFollowing ? "secondary-btn-sm" : "primary-btn-sm"}" onclick="event.stopPropagation(); toggleFollowUser('${u.username}')">${isFollowing ? "Following ✓" : "Follow"}</button>
-                        <button class="btn primary-btn-sm" onclick="event.stopPropagation(); startChatWith('${u.username}')">Message</button>
+                        ${actionBtnHtml}
                     </div>
                 `;
                 list.appendChild(card);
@@ -822,19 +825,24 @@ import { initializeFirestore, getFirestore, doc, getDoc, setDoc, updateDoc, dele
             document.getElementById("modal-joined").textContent = user.createdAt ? `Joined: ${new Date(user.createdAt.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString()}` : "";
 
             const followBtn = document.getElementById("modal-follow-btn");
+            const chatBtn = document.getElementById("modal-chat-btn");
             if (currentUser && currentUser.username === user.username) {
                 followBtn.classList.add("hidden");
+                chatBtn.classList.add("hidden");
             } else {
                 followBtn.classList.remove("hidden");
-                followBtn.textContent = isFollowing ? "Following ✓" : "Follow";
-                followBtn.className = isFollowing ? "btn primary-btn" : "btn secondary-btn";
+                followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+                followBtn.className = isFollowing ? "btn secondary-btn" : "btn primary-btn";
                 followBtn.onclick = () => toggleFollowUser(user.username);
+
+                if (chatBtn) {
+                    chatBtn.classList.remove("hidden");
+                    chatBtn.onclick = () => {
+                        document.getElementById("profile-modal").classList.add("hidden");
+                        startChatWith(user.username);
+                    };
+                }
             }
-            
-            document.getElementById("modal-chat-btn").onclick = () => {
-                document.getElementById("profile-modal").classList.add("hidden");
-                startChatWith(user.username);
-            };
 
             document.getElementById("profile-modal").classList.remove("hidden");
         };
